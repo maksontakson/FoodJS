@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/maksontakson/FoodJS/issues"
   },
-  "homepage": "https://github.com/maksontakson/FoodJS#readme"
+  "homepage": "https://github.com/maksontakson/FoodJS#readme",
+  "devDependencies": {
+    "json-server": "^1.0.0-alpha.23"
+  }
 }
