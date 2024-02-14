@@ -13,6 +13,9 @@ window.addEventListener('DOMContentLoaded', () => {
         })
     }
 
+    hideTabContent();
+    showTabContent(0);
+
     function showTabContent(i) {
         tabsContent[i].style.display = 'block';
         tabs[i].classList.add('tabheader__item_active');
@@ -187,7 +190,7 @@ window.addEventListener('DOMContentLoaded', () => {
         '.menu .container'
     ).render();
 
-    //forms
+    forms
 
     const forms = document.querySelectorAll('form');
 
@@ -264,7 +267,7 @@ window.addEventListener('DOMContentLoaded', () => {
         }, 4000);
     }
 
-    fetch('db.json')
+    fetch('http://localhost:3000/menu')
         .then(data => data.json())
         .then(res => console.log(res));
 });
