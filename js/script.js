@@ -2,7 +2,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const tabs = document.querySelectorAll('.tabheader__item'),
             tabsContent = document.querySelectorAll('.tabcontent'),
             tabsParent = document.querySelector('.tabheader__items');
-
+ 
     function hideTabContent() {
         tabsContent.forEach(item => {
             item.style.display = 'none';
@@ -13,13 +13,13 @@ window.addEventListener('DOMContentLoaded', () => {
         })
     }
 
-    hideTabContent();
-    showTabContent(0);
-
     function showTabContent(i) {
         tabsContent[i].style.display = 'block';
         tabs[i].classList.add('tabheader__item_active');
     }
+
+    hideTabContent();
+    showTabContent(0);
 
     tabs.forEach(item => {
         item.addEventListener('click', (event) => {
@@ -163,33 +163,29 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    new MenuCard(
-        "img/tabs/vegy.jpg",
-        "vegy",
-        'Меню "Фитнес"', 
-        "Меню 'Фитнес' - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!",
-        9,
-        '.menu .container'
-    ).render();
+    const getRosurce = async (url) => {
+        const res = await fetch(url);
 
-    new MenuCard(
-        "img/tabs/vegy.jpg",
-        "vegy",
-        'Меню "Фитнес"', 
-        "Меню 'Фитнес' - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!",
-        9,
-        '.menu .container'
-    ).render();
+        if(!res.ok) {
+            throw new Error(`Could not fetch ${url}, status ${res.status}`);
+        }
 
-    new MenuCard(
-        "img/tabs/vegy.jpg",
-        "vegy",
-        'Меню "Фитнес"', 
-        "Меню 'Фитнес' - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!",
-        9,
-        '.menu .container'
-    ).render();
+        return await res.json();
+    };
 
+    // getRosurce('http://localhost:3000/menu')
+    //     .then(data => {
+    //         data.forEach(({img, altimg, title, descr, price}) => {
+    //             new MenuCard(img, altimg, title, descr, price, '.menu .container').render();
+    //         });
+    //     });
+
+    axios.get('http://localhost:3000/menu')
+        .then(data => {
+                    data.data.forEach(({img, altimg, title, descr, price}) => {
+                        new MenuCard(img, altimg, title, descr, price, '.menu .container').render();
+                    });
+                });
 
     const forms = document.querySelectorAll('form');
 
@@ -203,10 +199,16 @@ window.addEventListener('DOMContentLoaded', () => {
         bindPostData(item);
     });
 
-    const postData = () => {
-        const res = fetch(url, {
-
+    const postData = async (url, data) => {
+        const res = await fetch(url, {
+            method: "POST",
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: data
         });
+
+        return await res.json();
     };
 
     function bindPostData(form) {
@@ -223,18 +225,9 @@ window.addEventListener('DOMContentLoaded', () => {
             
             const formData = new FormData(form);
 
-        const object = {};
-        formData.forEach(function(value, key){
-            object[key] = value;
-        });
+        const json = JSON.stringify(Object.fromEntries(formData.entries()));
 
-            fetch('server.php', {
-                method: "POST",
-                headers: {
-                    'Content-type': 'application/json'
-                },
-                body: JSON.stringify(object)
-            }).then(data => data.text())
+            postData('http://localhost:3000/requests', json)
             .then(data => {
                 console.log(data);
                 showThanksModal(message.success);
@@ -269,7 +262,48 @@ window.addEventListener('DOMContentLoaded', () => {
         }, 4000);
     }
 
-    // fetch('http://localhost:3000/menu')
-    //     .then(data => data.json())
-    //     .then(res => console.log(res));
+    // Creating clickable slider 0/4 on site 
+
+    const offerSlides = document.querySelectorAll('.offer__slide'),
+            currentNumOfferSlide = document.querySelector("#current"),
+            nextArrow = document.querySelector('.offer__slider-next'),
+            prevArrow = document.querySelector('.offer__slider-prev'),
+            maxSlides = offerSlides.length;
+
+    var iterator = 1;
+
+
+    function hideAllOfferSlides() {
+        offerSlides.forEach(item => {
+            item.style.display = 'none';
+        });
+    }
+
+    function showNOfferSlide(i) {
+        offerSlides[i].style.display = 'block';
+    }
+
+    hideAllOfferSlides();
+    showNOfferSlide(0);
+
+    currentNumOfferSlide.textContent = '0' + iterator;
+
+    offerSlides.forEach(item => {
+        console.log(item.innerHTML);
+    });
+
+    nextArrow.addEventListener('click', (event) => {
+        if (iterator == maxSlides) {
+            iterator = 0;
+        }
+        hideAllOfferSlides();
+        showNOfferSlide(iterator++);
+        currentNumOfferSlide.textContent = '0' + iterator;
+    });
+     
+    prevArrow.addEventListener('click', (event) => {
+        hideAllOfferSlides();
+        showNOfferSlide(iterator);  
+        
+    });
 });
