@@ -270,7 +270,7 @@ window.addEventListener('DOMContentLoaded', () => {
             prevArrow = document.querySelector('.offer__slider-prev'),
             maxSlides = offerSlides.length;
 
-    var iterator = 1;
+    var iterator = 0;
 
 
     function hideAllOfferSlides() {
@@ -286,24 +286,36 @@ window.addEventListener('DOMContentLoaded', () => {
     hideAllOfferSlides();
     showNOfferSlide(0);
 
-    currentNumOfferSlide.textContent = '0' + iterator;
+    currentNumOfferSlide.textContent = '0' + (iterator +1);
 
     offerSlides.forEach(item => {
         console.log(item.innerHTML);
     });
 
     nextArrow.addEventListener('click', (event) => {
-        if (iterator == maxSlides) {
+        if (iterator == maxSlides - 1) {
             iterator = 0;
+            hideAllOfferSlides();
+            showNOfferSlide(iterator);
+            currentNumOfferSlide.textContent = '0' + (iterator + 1);
+        } else {
+            hideAllOfferSlides();
+            showNOfferSlide(++iterator);
+            currentNumOfferSlide.textContent = '0' + (iterator + 1);
         }
-        hideAllOfferSlides();
-        showNOfferSlide(iterator++);
-        currentNumOfferSlide.textContent = '0' + iterator;
+        
     });
      
     prevArrow.addEventListener('click', (event) => {
-        hideAllOfferSlides();
-        showNOfferSlide(iterator);  
-        
+        if(iterator == 0) {
+            iterator = maxSlides - 1;
+            hideAllOfferSlides();
+            showNOfferSlide(iterator);  
+            currentNumOfferSlide.textContent = '0' + (iterator + 1);
+        } else {
+            hideAllOfferSlides();
+            showNOfferSlide(--iterator);
+            currentNumOfferSlide.textContent = '0' + (iterator + 1);
+        }
     });
 });
